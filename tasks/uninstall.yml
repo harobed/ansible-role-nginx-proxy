@@ -1,0 +1,16 @@
+---
+- name: Check if {{ nginx_proxy_project_path }}/docker-compose.yml exists
+  stat:
+    path: "{{ nginx_proxy_project_path }}/docker-compose.yml"
+  register: docker_compose_file
+
+- name: Stop all Nginx-Proxy services
+  docker_service:
+    project_src: "{{ nginx_proxy_project_path }}"
+    state: absent
+  when: docker_compose_file.stat.exists
+
+- name: Remove Nginx-Proxy Project content
+  file:
+    path: "{{ nginx_proxy_project_path }}"
+    state: absent

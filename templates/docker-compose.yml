@@ -1,0 +1,25 @@
+version: '2'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine-0.7.0
+    restart: unless-stopped
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: ""
+    network_mode: "host"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./vhost.d/:/etc/nginx/vhost.d:rw
+      - ./htpasswd:/etc/nginx/htpasswd:ro
+      - ./certs/:/etc/nginx/certs:ro
+      - /usr/share/nginx/html
+
+  nginx-proxy-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion:v1.9
+    restart: unless-stopped
+    depends_on:
+      - "nginx-proxy"
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - ./certs/:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro

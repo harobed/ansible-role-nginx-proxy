@@ -1,0 +1,10 @@
+---
+- import_tasks: install.yml
+  when: not nginx_proxy_uninstall
+  tags:
+    - nginx-proxy
+
+- import_tasks: uninstall.yml
+  when: nginx_proxy_uninstall
+  tags:
+    - nginx-proxy

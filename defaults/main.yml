@@ -1,0 +1,3 @@
+nginx_proxy_project_path: "/srv/nginx-proxy"
+
+nginx_proxy_uninstall: false

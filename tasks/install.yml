@@ -1,0 +1,26 @@
+---
+- name: Create {{ nginx_proxy_project_path }} directory
+  file:
+    path: "{{ nginx_proxy_project_path }}"
+    state: directory
+
+- name: Upload docker-compose.yml to {{ nginx_proxy_project_path }}/docker-compose.yml
+  template:
+    src: "docker-compose.yml"
+    dest: "{{ nginx_proxy_project_path }}/docker-compose.yml"
+
+- name: Pull all Docker images
+  command: docker-compose pull
+  args:
+    chdir: "{{ nginx_proxy_project_path }}"
+  changed_when: False
+
+- name: Start nginx-proxy and nginx-proxy-letsencrypt services
+  docker_service:
+    project_src: "{{ nginx_proxy_project_path }}"
+    services:
+      - nginx-proxy
+      - nginx-proxy-letsencrypt
+    state: present
+    pull: yes
+    recreate: smart
